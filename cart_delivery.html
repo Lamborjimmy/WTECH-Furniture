@@ -166,14 +166,12 @@
           </a>
           <a
             href="cart_payment.html"
-            class="text-decoration-none text-dark d-flex align-items-center"
+            class="text-decoration-none text-secondary d-flex align-items-center"
           >
             <i class="bi bi-2-circle-fill fs-4 me-2"></i>
             <span class="fw-bold fs-4">Doprava a platba</span>
           </a>
-          <a
-            class="text-decoration-none text-secondary d-flex align-items-center"
-          >
+          <a class="text-decoration-none text-dark d-flex align-items-center">
             <i class="bi bi-3-circle-fill fs-4 me-2"></i>
             <span class="fw-bold fs-4">Dodacie údaje</span>
           </a>
@@ -181,96 +179,86 @@
 
         <div class="row">
           <div class="col-12 col-md-6 mb-4 mb-md-0">
-            <h3 class="mb-3">Doprava a platba</h3>
+            <h3 class="mb-3">Dodacie údaje</h3>
             <div
               class="card p-3 border border-secondary border-opacity-25 rounded-0"
             >
-              <h4>Platba</h4>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="payment"
-                  id="payment1"
-                  value="card"
-                  checked
-                />
-                <label class="form-check-label" for="payment1"
-                  >Karta online</label
-                >
-              </div>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="payment"
-                  id="payment2"
-                  value="cash"
-                />
-                <label class="form-check-label" for="payment2">Dobierka</label>
-              </div>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="payment"
-                  id="payment3"
-                  value="transfer"
-                />
-                <label class="form-check-label" for="payment3"
-                  >Bankový prevod</label
-                >
-              </div>
-              <h4>Doprava</h4>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="shipping"
-                  id="shipping1"
-                  value="courier"
-                  checked
-                />
-                <label class="form-check-label" for="shipping1"
-                  >Kuriér (3.99€)</label
-                >
-              </div>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="shipping"
-                  id="shipping2"
-                  value="post"
-                />
-                <label class="form-check-label" for="shipping2"
-                  >Pošta (2.99€)</label
-                >
-              </div>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="shipping"
-                  id="shipping3"
-                  value="box"
-                />
-                <label class="form-check-label" for="shipping2"
-                  >Odberné miesto (1.99€)</label
-                >
-              </div>
-              <div class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="shipping"
-                  id="shipping4"
-                  value="pickup"
-                />
-                <label class="form-check-label" for="shipping3"
-                  >Osobný odber</label
-                >
-              </div>
+              <form>
+                <div class="mb-3">
+                  <label for="fullName" class="form-label"
+                    >Meno a priezvisko</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="fullName"
+                    placeholder="Jaroslav Ertl"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">E-mail</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    placeholder="jaroslav.ertl@gmail.com"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="phone" class="form-label">Telefónne číslo</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phone"
+                    placeholder="+421 123 456 789"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="address" class="form-label">Ulica a číslo</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="address"
+                    placeholder="Iľkovičova 6276/2"
+                    required
+                  />
+                </div>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label for="city" class="form-label">Mesto</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="city"
+                      placeholder="Bratislava 4"
+                      required
+                    />
+                  </div>
+                  <div class="col-6">
+                    <label for="postalCode" class="form-label">PSČ</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="postalCode"
+                      placeholder="842 16"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="country" class="form-label">Krajina</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="country"
+                    placeholder="Slovenská Republika"
+                    required
+                  />
+                </div>
+              </form>
             </div>
           </div>
 
@@ -415,7 +403,7 @@
             <div
               class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"
             >
-              <a href="cart_overview.html" class="btn btn-outline-secondary">
+              <a href="cart_payment.html" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-2"></i> Späť
               </a>
               <div
@@ -424,9 +412,9 @@
                 <h4 class="mb-2">
                   Celkom: <span class="fw-bold">843.97€</span>
                 </h4>
-                <a href="cart_delivery.html" class="btn btn-success">
-                  Pokračovať <i class="bi bi-arrow-right ms-2"></i>
-                </a>
+                <button class="btn btn-success">
+                  Objednať <i class="bi bi-check2 ms-1"></i>
+                </button>
               </div>
             </div>
           </div>
