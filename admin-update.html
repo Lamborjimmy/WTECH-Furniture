@@ -31,16 +31,28 @@
     </nav>
     <main class="container py-5 my-5">
       <div class="row justify-content-center col-lg-8 mx-auto p-4 bg-light">
-        <h2 class="fs-3 text-secondary text-center mb-3">Nový produkt</h2>
+        <h2 class="fs-3 text-secondary text-center mb-3">Upraviť produkt</h2>
         <form>
           <div class="row">
             <div class="col-md-8 mb-3">
               <label for="title" class="form-label">Názov</label>
-              <input id="title" type="text" class="form-control" required />
+              <input
+                value="Textilné kreslo"
+                id="title"
+                type="text"
+                class="form-control"
+                required
+              />
             </div>
             <div class="col-md-4 mb-3">
               <label for="code" class="form-label">Kód</label>
-              <input id="code" type="text" class="form-control" required />
+              <input
+                value="AXOCDF7458"
+                id="code"
+                type="text"
+                class="form-control"
+                required
+              />
             </div>
           </div>
           <div class="mb-3">
@@ -117,7 +129,7 @@
               <label for="category" class="form-label">Kategória</label>
               <select id="category" class="form-select">
                 <option selected hidden></option>
-                <option value="1">Kreslá</option>
+                <option value="1" selected>Kreslá</option>
                 <option value="2">Stoly</option>
                 <option value="3">Stoličky</option>
               </select>
@@ -127,7 +139,7 @@
               <select id="color" class="form-select">
                 <option selected hidden></option>
                 <option value="1">Čierna</option>
-                <option value="2">Žltá</option>
+                <option value="2" selected>Béžová</option>
                 <option value="3">Hnedá</option>
               </select>
             </div>
@@ -138,16 +150,16 @@
               <select id="material" class="form-select">
                 <option selected hidden></option>
                 <option value="1">Plast</option>
-                <option value="2">Kov</option>
+                <option value="2" selected>Textil</option>
                 <option value="3">Drevo</option>
               </select>
             </div>
             <div class="col-md-6 mb-3">
               <label for="placement" class="form-label">Umiestnenie</label>
               <select id="placement" class="form-select">
-                <option selected hidden></option>
+                <option hidden></option>
                 <option value="1">Spálňa</option>
-                <option value="2">Kuchyňa</option>
+                <option value="2" selected>Obývacia izba</option>
                 <option value="3">Kúpeľňa</option>
               </select>
             </div>
@@ -158,6 +170,7 @@
               <div class="input-group">
                 <span class="input-group-text" id="priceEuro">€</span>
                 <input
+                  value="127.99"
                   id="price"
                   type="number"
                   class="form-control"
@@ -169,16 +182,17 @@
             <div class="col-md-4 mb-4">
               <label class="form-label">Rozmery Š-D-H (cm)</label>
               <div class="d-flex align-items-center gap-1">
-                <input type="text" class="form-control" required />
+                <input value="100" type="text" class="form-control" required />
                 <i class="bi bi-x"></i>
-                <input type="text" class="form-control" required />
+                <input value="120" type="text" class="form-control" required />
                 <i class="bi bi-x"></i>
-                <input type="text" class="form-control" required />
+                <input value="50" type="text" class="form-control" required />
               </div>
             </div>
           </div>
           <div class="d-flex justify-content-between">
             <button
+              type="button"
               class="btn btn-outline-secondary"
               onclick="window.location.href='admin-products.html';"
             >
@@ -187,7 +201,7 @@
             </button>
             <button type="submit" class="btn btn-success">
               <i class="bi bi-check"></i>
-              Pridať
+              Upraviť
             </button>
           </div>
         </form>
@@ -195,4 +209,5 @@
     </main>
   </body>
   <script src="admin-add.js"></script>
+  <script src="admin-update.js"></script>
 </html>

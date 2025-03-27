@@ -33,3 +33,11 @@
 .carousel-control-next-icon {
   filter: invert(100%);
 }
+.admin-image-container {
+  position: relative;
+}
+.admin-delete-button {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+}
