@@ -164,34 +164,32 @@
             >
               <div class="flex-fill">
                 <img
-                  class="img-fluid bg-light thumbnail w-75"
-                  src="assets/armchair/armchair1.png"
-                  alt="Main Thumbnail"
-                  data-large="assets/armchair/armchair1.png"
-                />
-              </div>
-              <div class="flex-fill">
-                <img
-                  class="img-fluid bg-light thumbnail w-75"
+                  class="img-fluid bg-light thumbnail"
                   src="assets/armchair/armchair-01-1.png"
                   alt="Thumbnail 1"
                   data-large="assets/armchair/armchair-01-1.png"
+                  data-bs-toggle="modal"
+                  data-bs-target="#imageModal"
                 />
               </div>
               <div class="flex-fill">
                 <img
-                  class="img-fluid bg-light thumbnail w-75"
+                  class="img-fluid bg-light thumbnail"
                   src="assets/armchair/armchair-01-2.png"
                   alt="Thumbnail 2"
                   data-large="assets/armchair/armchair-01-2.png"
+                  data-bs-toggle="modal"
+                  data-bs-target="#imageModal"
                 />
               </div>
               <div class="flex-fill">
                 <img
-                  class="img-fluid bg-light thumbnail w-75"
+                  class="img-fluid bg-light thumbnail"
                   src="assets/armchair/armchair-01-3.png"
                   alt="Thumbnail 3"
                   data-large="assets/armchair/armchair-01-3.png"
+                  data-bs-toggle="modal"
+                  data-bs-target="#imageModal"
                 />
               </div>
             </div>
@@ -199,10 +197,13 @@
               class="col-12 col-sm-9 col-xl-6 mt-4 mt-sm-0 main-image-container"
             >
               <img
-                class="img-fluid bg-light"
+                class="img-fluid bg-light thumbnail"
                 id="mainImage"
                 src="assets/armchair/armchair1.png"
                 alt="Main product image"
+                data-large="assets/armchair/armchair1.png"
+                data-bs-toggle="modal"
+                data-bs-target="#imageModal"
               />
             </div>
             <div class="col-12 col-xl-4 mt-4 mt-xl-0 d-flex">
@@ -265,6 +266,34 @@
         </div>
       </div>
     </main>
+    <div
+      class="modal fade"
+      id="imageModal"
+      tabindex="-1"
+      aria-labelledby="imageModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <img
+              id="modalImage"
+              class="img-fluid"
+              src=""
+              alt="Large product image"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <div class="border border-secondary border-opacity-25 rounded-0 mb-4 p-4">
         <h2 class="mb-3">Popis</h2>

@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
   const thumbnails = document.querySelectorAll(".thumbnail");
-  const mainImage = document.getElementById("mainImage");
+  const modalImage = document.getElementById("modalImage");
 
   thumbnails.forEach((thumbnail) => {
     thumbnail.addEventListener("click", function () {
-      const newSrc = this.getAttribute("data-large");
-      mainImage.src = newSrc;
+      const largeSrc = this.getAttribute("data-large");
+      modalImage.src = largeSrc;
     });
   });
 });
