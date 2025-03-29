@@ -2,7 +2,7 @@ document.getElementById("desc").value =
   "Tento kus nábytku prináša dokonalú kombináciu štýlu, komfortu a funkčnosti. Navrhnutý s dôrazom na kvalitu a trvanlivosť, je ideálnou voľbou pre každý interiér. Jeho nadčasový dizajn a kvalitné materiály zaručujú, že sa hodí do rôznych miestností a štýlov zariadenia. Či už v obývacej izbe, spálni, kancelárii alebo jedálni, tento nábytok prinesie do vášho domova nielen pohodlie, ale aj estetický dojem. Jeho praktické využitie a moderný vzhľad ho robia ideálnym doplnkom každého priestoru.";
 
 const productImagePaths = [
-  { path: "assets/armchair/armchair1.png", isMain: true },
+  { path: "assets/armchair/armchair-01.png", isMain: true },
   { path: "assets/armchair/armchair-01-1.png", isMain: false },
   { path: "assets/armchair/armchair-01-2.png", isMain: false },
   { path: "assets/armchair/armchair-01-3.png", isMain: false },
