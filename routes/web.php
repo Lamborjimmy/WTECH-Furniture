@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,3 +19,9 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/products', [ProductController::class, 'index']) ->name('products.index');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/', fn() => view('home'))->name('home');
+Route::get('/cart-overview', fn() => view('cart.overview'))->name('cart.overview');
+Route::post('/cart/add', fn() => redirect()->route('cart.overview'))->name('cart.add'); 
