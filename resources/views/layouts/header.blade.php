@@ -42,7 +42,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="d-flex align-items-center gap-1 nav-link {{ request()->routeIs('cart.overview') ? 'active' : '' }}" href="{{ route('cart.overview') }}">
+                        <a class="d-flex align-items-center gap-1 nav-link {{ request()->routeIs('cart.index') ? 'active' : '' }}" href="{{ route('cart.index') }}">
                             <i class="bi bi-cart-fill"></i> Košík
                         </a>
                     </li>
