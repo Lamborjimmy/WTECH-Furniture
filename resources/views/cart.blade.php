@@ -9,7 +9,7 @@
                     <i class="bi bi-1-circle-fill fs-4 me-2"></i>
                     <span class="fw-bold fs-4">Košík</span>
                 </a>
-                <a href="#" class="text-decoration-none text-secondary d-flex align-items-center">
+                <a href="{{ route('cart.payment') }}" class="text-decoration-none text-secondary d-flex align-items-center">
                     <i class="bi bi-2-circle-fill fs-4 me-2"></i>
                     <span class="fw-bold fs-4">Doprava a platba</span>
                 </a>
@@ -130,7 +130,7 @@
                                     @endif
                                 </span>
                             </h4>
-                            <a href="#" class="btn btn-success">
+                            <a href="{{ route('cart.payment') }}" class="btn btn-success">
                                 Pokračovať <i class="bi bi-arrow-right ms-2"></i>
                             </a>
                         </div>

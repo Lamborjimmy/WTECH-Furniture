@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Coupon;
+use App\Models\DeliveryOption;
+use App\Models\PaymentOption;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -113,5 +115,56 @@ class CartController extends Controller
         session(['coupon_code' => $request->coupon_code]);
 
         return redirect()->route('cart.index')->with('success', 'Zľavový kód použitý.');
+    }
+
+    public function payment()
+    {
+        $cart = Auth::check() ? Cart::with('products.mainImage')->firstOrCreate(['user_id' => Auth::id()]) : null;
+
+        if (!$cart || $cart->products->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Váš košík je prázdny.');
+        }
+
+        $total = $cart->products->sum(function ($product) {
+            return $product->price * $product->pivot->quantity;
+        });
+        $discount = 0;
+        if (session('coupon_code')) {
+            $coupon = Coupon::where('code', session('coupon_code'))->where('amount', '>', 0)->first();
+            if ($coupon) {
+                $discount = ($coupon->discount / 100) * $total;
+            } else {
+                session()->forget('coupon_code');
+            }
+        }
+
+        $paymentOptions = PaymentOption::all();
+        $deliveryOptions = DeliveryOption::all();
+
+        return view('cart-payment', compact('cart', 'total', 'discount', 'paymentOptions', 'deliveryOptions'));
+    }
+
+    public function storePayment(Request $request)
+    {
+        $request->validate([
+            'payment_option_id' => 'required|exists:payment_options,id',
+            'delivery_option_id' => 'required|exists:delivery_options,id',
+            'cart_total' => 'required|numeric|min:0',
+        ]);
+
+        $cart = Cart::where('user_id', Auth::id())->firstOrFail();
+
+        if ($cart->products->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Váš košík je prázdny.');
+        }
+        $deliveryOption = DeliveryOption::findOrFail($request->delivery_option_id);
+        $finalTotal = $request->cart_total + $deliveryOption->price;
+        session([
+            'cart.payment_option_id' => $request->payment_option_id,
+            'cart.delivery_option_id' => $request->delivery_option_id,
+            'cart.total' => $finalTotal,
+        ]);
+        // Redirect to delivery details step (placeholder)
+        return redirect()->route('cart.index')->with('success', 'Možnosti dopravy a platby uložené.');
     }
 }

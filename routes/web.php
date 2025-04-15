@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/cart/update/{pivotId}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{pivotId}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+    Route::get('/cart/payment', [CartController::class, 'payment'])->name('cart.payment');
+    Route::post('/cart/payment', [CartController::class, 'storePayment'])->name('cart.payment.store');
 });
 
 require __DIR__.'/auth.php';
