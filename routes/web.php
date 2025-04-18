@@ -24,6 +24,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
     Route::get('/cart/payment', [CartController::class, 'payment'])->name('cart.payment');
     Route::post('/cart/payment', [CartController::class, 'storePayment'])->name('cart.payment.store');
+    Route::get('/cart/delivery', [CartController::class, 'delivery'])->name('cart.delivery');
+    Route::post('/cart/delivery/store', [CartController::class, 'storeDelivery'])->name('cart.delivery.store');
+    Route::get('/order-complete/{id}', [CartController::class, 'orderComplete'])->name('order.complete');
 });
 
 require __DIR__.'/auth.php';

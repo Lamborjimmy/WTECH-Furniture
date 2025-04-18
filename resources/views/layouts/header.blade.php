@@ -1,4 +1,4 @@
-<style>
+    <style>
         nav.bg-white.border-b.border-gray-100 {
                 display: none;
             }
