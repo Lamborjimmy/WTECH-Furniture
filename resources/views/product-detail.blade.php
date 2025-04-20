@@ -39,9 +39,9 @@
                         <img
                             class="img-fluid bg-light thumbnail"
                             id="mainImage"
-                            src="{{ asset('assets/placeholder.png') }}"
+                            src="{{ asset('images/placeholder.png') }}"
                             alt="No image"
-                            data-large="{{ asset('assets/placeholder.png') }}"
+                            data-large="{{ asset('images/placeholder.png') }}"
                             data-bs-toggle="modal"
                             data-bs-target="#imageModal"
                         />

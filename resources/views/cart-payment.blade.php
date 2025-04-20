@@ -9,7 +9,7 @@
                     <i class="bi bi-1-circle-fill fs-4 me-2"></i>
                     <span class="fw-bold fs-4">Košík</span>
                 </a>
-                <a href="{{ route('cart.payment') }}" class="text-decoration-none text-dark d-flex align-items-center">
+                <a href="{{ route('order.payment') }}" class="text-decoration-none text-dark d-flex align-items-center">
                     <i class="bi bi-2-circle-fill fs-4 me-2"></i>
                     <span class="fw-bold fs-4">Doprava a platba</span>
                 </a>
@@ -31,7 +31,7 @@
                 <!-- Payment and Delivery Options -->
                 <div class="col-12 col-md-6 mb-4 mb-md-0">
                     <h3 class="mb-3">Doprava a platba</h3>
-                    <form id="payment-form" action="{{ route('cart.payment.store') }}" method="POST">
+                    <form id="payment-form" action="{{ route('order.payment.store') }}" method="POST">
                         @csrf
                         <div class="card p-3 border border-secondary border-opacity-25 rounded-0">
                             <h4>Platba</h4>
@@ -79,20 +79,20 @@
                 <div class="col-12 col-md-6">
                     <h3 class="mb-3">Prehľad košíka</h3>
                     <div class="cart-items">
-                        @if ($cart && $cart->products->isNotEmpty())
-                            @foreach ($cart->products as $product)
+                        @if ($cartItems->isNotEmpty())
+                            @foreach ($cartItems as $item)
                                 <div class="card mb-2 border border-secondary border-opacity-25 rounded-0">
                                     <div class="row g-0">
                                         <div class="col-2 bg-light rounded-start d-flex align-items-center justify-content-center p-1">
-                                            @if ($product->mainImage)
+                                            @if ($item['image'])
                                                 <img
-                                                    src="{{ asset('storage/' . $product->mainImage->path) }}"
+                                                    src="{{ asset('storage/' . $item['image']) }}"
                                                     class="img-fluid"
-                                                    alt="{{ $product->title }}"
+                                                    alt="{{ $item['title'] }}"
                                                 />
                                             @else
                                                 <img
-                                                    src="{{ asset('assets/placeholder.png') }}"
+                                                    src="{{ asset('images/placeholder.png') }}"
                                                     class="img-fluid"
                                                     alt="No image"
                                                 />
@@ -102,20 +102,20 @@
                                             <div class="card-body py-2 px-3">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title fw-bold fs-5 text-dark m-0">
-                                                        <a href="{{ route('products.show', $product->id) }}" class="text-dark text-decoration-none">
-                                                            {{ $product->title }}
+                                                        <a href="{{ route('products.show', $item['id']) }}" class="text-dark text-decoration-none">
+                                                            {{ $item['title'] }}
                                                         </a>
                                                     </h5>
                                                 </div>
                                                 <div class="d-flex flex-column align-items-end gap-2">
                                                     <div class="d-flex align-items-center gap-2">
                                                         <h5 class="card-title fw-bold fs-6 text-secondary m-0">Množstvo</h5>
-                                                        <span class="form-control text-center py-0" style="width: 40px; font-size: 0.9rem">
-                                                            {{ $product->pivot->quantity }}
+                                                        <span class="form-control text-center py-0" style="width: 50px; font-size: 0.9rem">
+                                                            {{ $item['quantity'] }}
                                                         </span>
                                                     </div>
                                                     <span class="fw-bold" style="font-size: 1rem">
-                                                        {{ number_format($product->price * $product->pivot->quantity, 2) }}€
+                                                        {{ number_format($item['price'] * $item['quantity'], 2) }}€
                                                     </span>
                                                 </div>
                                             </div>
@@ -130,7 +130,7 @@
                 </div>
 
                 <!-- Navigation -->
-                @if ($cart && $cart->products->isNotEmpty())
+                @if ($cartItems->isNotEmpty())
                     <div class="cart-navigation mt-4">
                         <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
                             <a href="{{ route('cart.index') }}" class="btn btn-outline-secondary">

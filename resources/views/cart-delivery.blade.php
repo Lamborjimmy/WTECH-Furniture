@@ -9,7 +9,7 @@
                     <i class="bi bi-1-circle-fill fs-4 me-2"></i>
                     <span class="fw-bold fs-4">Košík</span>
                 </a>
-                <a href="{{ route('cart.payment') }}" class="text-decoration-none text-secondary d-flex align-items-center">
+                <a href="{{ route('order.payment') }}" class="text-decoration-none text-secondary d-flex align-items-center">
                     <i class="bi bi-2-circle-fill fs-4 me-2"></i>
                     <span class="fw-bold fs-4">Doprava a platba</span>
                 </a>
@@ -28,7 +28,7 @@
             @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    <ul>
+                    <ul class="m-0 p-0">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -158,20 +158,20 @@
                 <div class="col-12 col-md-6">
                     <h3 class="mb-3">Prehľad košíka</h3>
                     <div class="cart-items">
-                        @if ($cart && $cart->products->isNotEmpty())
-                            @foreach ($cart->products as $product)
+                        @if ($cartItems->isNotEmpty())
+                            @foreach ($cartItems as $item)
                                 <div class="card mb-2 border border-secondary border-opacity-25 rounded-0">
                                     <div class="row g-0">
                                         <div class="col-2 bg-light rounded-start d-flex align-items-center justify-content-center p-1">
-                                            @if ($product->mainImage)
+                                            @if ($item['image'])
                                                 <img
-                                                    src="{{ asset('storage/' . $product->mainImage->path) }}"
+                                                    src="{{ asset('storage/' . $item['image']) }}"
                                                     class="img-fluid"
-                                                    alt="{{ $product->title }}"
+                                                    alt="{{ $item['title'] }}"
                                                 />
                                             @else
                                                 <img
-                                                    src="{{ asset('assets/placeholder.png') }}"
+                                                    src="{{ asset('images/placeholder.png') }}"
                                                     class="img-fluid"
                                                     alt="No image"
                                                 />
@@ -181,8 +181,8 @@
                                             <div class="card-body py-2 px-3">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title fw-bold fs-5 text-dark m-0">
-                                                        <a href="{{ route('products.show', $product->id) }}" class="text-dark text-decoration-none">
-                                                            {{ $product->title }}
+                                                        <a href="{{ route('products.show', $item['id']) }}" class="text-dark text-decoration-none">
+                                                            {{ $item['title'] }}
                                                         </a>
                                                     </h5>
                                                 </div>
@@ -190,11 +190,11 @@
                                                     <div class="d-flex align-items-center gap-2">
                                                         <h5 class="card-title fw-bold fs-6 text-secondary m-0">Množstvo</h5>
                                                         <span class="form-control text-center py-0" style="width: 40px; font-size: 0.9rem">
-                                                            {{ $product->pivot->quantity }}
+                                                            {{ $item['quantity'] }}
                                                         </span>
                                                     </div>
                                                     <span class="fw-bold" style="font-size: 1rem">
-                                                        {{ number_format($product->price * $product->pivot->quantity, 2) }}€
+                                                        {{ number_format($item['price'] * $item['quantity'], 2) }}€
                                                     </span>
                                                 </div>
                                             </div>
@@ -203,23 +203,23 @@
                                 </div>
                             @endforeach
                         @else
-                            <p class="text-center">Váš košík je prázdny.</p>
+                            <p class="text-start">Váš košík je prázdny.</p>
                         @endif
                     </div>
                 </div>
 
                 <!-- Navigation -->
-                @if ($cart && $cart->products->isNotEmpty())
+                @if ($cartItems>isNotEmpty())
                     <div class="cart-navigation mt-4">
                         <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
-                            <a href="{{ route('cart.payment') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('order.payment') }}" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-2"></i> Späť
                             </a>
                             <div class="d-flex flex-column align-items-center align-items-md-end">
                                 <h4 class="mb-2">
                                     Celkom: 
                                     <span class="fw-bold">
-                                        {{ number_format(session('cart.total'), 2) }}€
+                                        {{ number_format($total - $discount, 2) }}€
                                         @if ($discount > 0)
                                             (Zľava: {{ number_format($discount, 2) }}€)
                                         @endif

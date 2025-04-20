@@ -63,9 +63,9 @@
                             <button class="btn btn-success mt-5" data-bs-dismiss="offcanvas">
                                 <i class="bi bi-search me-2"></i> Použiť
                             </button>
-                            <button type="reset" class="btn btn-danger mt-1" onclick="window.location='{{ route('products.index') }}'">
+                            <a type="reset" class="btn btn-danger mt-1" href='{{ route('products.index') }}'">
                                 <i class="bi bi-arrow-clockwise"></i> Obnoviť
-                            </button>
+                            </a>
                         </form>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                                 @if ($product->mainImage)
                                     <img src="{{ asset('storage/' . $product->mainImage->path) }}" class="img-fluid" alt="{{ $product->title }}">
                                 @else
-                                    <img src="{{ asset('assets/placeholder.png') }}" class="img-fluid" alt="No image">
+                                    <img src="{{ asset('images/placeholder.png') }}" class="img-fluid" alt="No image">
                                 @endif
                             </div>
                             <div class="card-body px-0">
