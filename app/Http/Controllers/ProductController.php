@@ -74,4 +74,12 @@ class ProductController extends Controller
 
         return view('product-detail', compact('product', 'relatedProducts', 'categories'));
     }
+
+    public function home()
+    {
+        $products = Product::with(['category', 'mainImage'])->where('valid', true)->take(8)->get();
+        $categories = Category::all();
+
+        return view('home', compact('products', 'categories'));
+    }
 }

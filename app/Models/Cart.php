@@ -11,7 +11,7 @@ class Cart extends Model
 
     protected $fillable = ['user_id'];
 
-    public $timestamps = false; // Disable timestamps
+    public $timestamps = false;
 
     public function user()
     {

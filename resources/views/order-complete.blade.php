@@ -19,7 +19,7 @@
                         O stave Vašej objednávky Vás budeme informovať prostredníctvom
                         e-mailu. Ak máte akékoľvek otázky, neváhajte nás kontaktovať.
                     </p>
-                    <a href="{{ route('home') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('home.index') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-2"></i> Späť na hlavnú stránku
                     </a>
                 </div>

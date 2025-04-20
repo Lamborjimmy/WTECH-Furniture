@@ -295,7 +295,7 @@ class DatabaseSeeder extends Seeder
                 'dimensions' => ['width' => 60, 'length' => 60, 'depth' => 100],
             ],
             [
-                'title' => 'Bežná',
+                'title' => 'Bežná Stolička',
                 'price' => 59.99,
                 'color_id' => $colorBlackId,
                 'category_id' => $categoryChairId,
