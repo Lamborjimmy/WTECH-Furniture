@@ -65,7 +65,7 @@ class OrderController extends Controller
             'cart_total' => 'required|numeric|min:0',
         ]);
 
-        if (!Auth::check()) {
+        if (Auth::check()) {
             $cart = Cart::where('user_id', Auth::id())->firstOrFail();
 
             if ($cart->products->isEmpty()) {
@@ -93,7 +93,7 @@ class OrderController extends Controller
 
     public function delivery()
     {
-        if (!Auth::check()) {
+        if (Auth::check()) {
             $cart = Cart::where('user_id', Auth::id())->firstOrFail();
 
             if ($cart->products->isEmpty()) {
@@ -112,7 +112,6 @@ class OrderController extends Controller
         }
 
         $total = session('order.total');
-
         $discount = 0;
         
         if (session('coupon_code')) {
@@ -125,7 +124,7 @@ class OrderController extends Controller
         }
 
         return view('cart-delivery', [
-            'cartItems' => $cart,
+            'cartItems' => CartHelper::getCartItems($cart),
             'total' => $total,
             'discount' => $discount,
         ]);
@@ -168,10 +167,18 @@ class OrderController extends Controller
             'country.in' => 'Krajina musí byť Slovenská Republika.',
         ]);
 
-        $cart = Cart::where('user_id', Auth::id())->firstOrFail();
+        if (Auth::check()) {
+            $cart = Cart::where('user_id', Auth::id())->firstOrFail();
 
-        if ($cart->products->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Váš košík je prázdny.');
+            if ($cart->products->isEmpty()) {
+                return redirect()->route('cart.index')->with('error', 'Váš košík je prázdny.');
+            }
+        } else {
+            $cart = session()->get('cart', []);
+    
+            if (empty($cart)) {
+                return redirect()->route('cart.index')->with('error', 'Váš košík je prázdny.');
+            }
         }
 
         if (!session('order.payment_option_id') || !session('order.delivery_option_id') || !session('order.total')) {
@@ -189,7 +196,7 @@ class OrderController extends Controller
 
             $order = Order::create([
                 'id' => Str::uuid(),
-                'user_id' => Auth::id(),
+                'user_id' => Auth::check() ? Auth::id() : null,
                 'processed_date' => now(),
                 'delivery_detail_id' => $deliveryDetail->id,
                 'payment_option_id' => session('order.payment_option_id'),
@@ -197,32 +204,42 @@ class OrderController extends Controller
                 'coupon_id' => $coupon?->id,
             ]);
 
-            foreach ($cart->products as $product) {
-                $order->products()->attach($product->id, [
-                    'quantity' => $product->pivot->quantity
-                ]);
+            if (Auth::check()) {
+                foreach ($cart->products as $product) {
+                    $order->products()->attach($product->id, [
+                        'quantity' => $product->pivot->quantity
+                    ]);
+                }
+            } else {
+                foreach ($cart as $productId => $item) {
+                    $product = Product::findOrFail($productId);
+                    $order->products()->attach($productId, [
+                        'quantity' => $item['quantity']
+                    ]);
+                }
             }
 
             if ($coupon && $coupon->amount > 0) {
                 $coupon->decrement('amount');
             }
 
-            // Clear everything except total for complete page
-            $cart->products()->detach();
+            if (Auth::check()) {
+                $cart->products()->detach();
+            }
+            
             session()->forget([
+                'cart',
                 'order.payment_option_id',
                 'order.delivery_option_id',
-                'order.delivery_price',
                 'coupon_code',
             ]);
 
-            session()->put('order.total', session('order.total'));
-            session()->forget('order.total');
+            session()->flash('order.total', session('order.total'));
 
             return redirect()->route('order.complete', $order->id)
-                ->with('success', 'Objednávka bola úspešne vytvorená.');
+                ->with('success', 'Objednávka bola úspešne vytvorená.');        
+        
         } catch (\Exception $e) {
-            Log::error('Order creation failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', 'Chyba pri vytváraní objednávky. Skúste to znova.');
         }
     }

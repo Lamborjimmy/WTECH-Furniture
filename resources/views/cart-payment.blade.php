@@ -102,7 +102,7 @@
                                             <div class="card-body py-2 px-3">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title fw-bold fs-5 text-dark m-0">
-                                                        <a href="{{ route('products.show', $item['id']) }}" class="text-dark text-decoration-none">
+                                                        <a href="{{ isset($item['id']) ? route('products.show', $item['id']) : '#' }}" class="text-dark text-decoration-none">
                                                             {{ $item['title'] }}
                                                         </a>
                                                     </h5>

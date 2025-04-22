@@ -28,7 +28,7 @@
             @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    <ul class="m-0 p-0">
+                    <ul class="m-0">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -41,7 +41,7 @@
                 <div class="col-12 col-md-6 mb-4 mb-md-0">
                     <h3 class="mb-3">Dodacie údaje</h3>
                     <div class="card p-3 border border-secondary border-opacity-25 rounded-0">
-                        <form id="delivery-form" action="{{ route('cart.delivery.store') }}" method="POST">
+                        <form id="delivery-form" action="{{ route('order.delivery.store') }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label for="fullname" class="form-label">Meno a priezvisko</label>
@@ -181,7 +181,7 @@
                                             <div class="card-body py-2 px-3">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title fw-bold fs-5 text-dark m-0">
-                                                        <a href="{{ route('products.show', $item['id']) }}" class="text-dark text-decoration-none">
+                                                        <a href="{{ isset($item['id']) ? route('products.show', $item['id']) : '#' }}" class="text-dark text-decoration-none">
                                                             {{ $item['title'] }}
                                                         </a>
                                                     </h5>
@@ -189,7 +189,7 @@
                                                 <div class="d-flex flex-column align-items-end gap-2">
                                                     <div class="d-flex align-items-center gap-2">
                                                         <h5 class="card-title fw-bold fs-6 text-secondary m-0">Množstvo</h5>
-                                                        <span class="form-control text-center py-0" style="width: 40px; font-size: 0.9rem">
+                                                        <span class="form-control text-center py-0" style="width: 50px; font-size: 0.9rem">
                                                             {{ $item['quantity'] }}
                                                         </span>
                                                     </div>
@@ -209,7 +209,7 @@
                 </div>
 
                 <!-- Navigation -->
-                @if ($cartItems>isNotEmpty())
+                @if ($cartItems->isNotEmpty())
                     <div class="cart-navigation mt-4">
                         <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
                             <a href="{{ route('order.payment') }}" class="btn btn-outline-secondary">

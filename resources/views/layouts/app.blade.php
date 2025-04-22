@@ -17,13 +17,13 @@
     </head>
     <body class="font-sans antialiased d-flex flex-column min-vh-100">
         @if(in_array(Route::currentRouteName(), ['login', 'register']))
-            @include('layouts.header-minimal')
+            @include('components.header-minimal')
         @else
-            @include('layouts.header')
+            @include('components.header')
         @endif
         <main class="d-flex flex-column flex-grow-1">
             {{ $slot }}
         </main>
-        @include('layouts.footer')
+        @include('components.footer')
     </body>
 </html>

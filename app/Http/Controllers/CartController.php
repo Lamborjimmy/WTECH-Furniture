@@ -190,6 +190,10 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('error', 'Neplatný alebo vyčerpaný zľavový kód.');
         }
 
+        if (session('coupon_code')) {
+            return redirect()->route('cart.index')->with('error', 'Zľavový kód už bol raz zadaný.');
+        }
+
         session(['coupon_code' => $request->coupon_code]);
 
         return redirect()->route('cart.index')->with('success', 'Zľavový kód použitý.');
