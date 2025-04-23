@@ -14,6 +14,11 @@
                     <div class="offcanvas-body">
                         <form class="d-flex flex-column gap-3" action="{{ route('products.index') }}" method="GET">
                             <div>
+                                <!-- Hidden inputs to retain the current search and sort parameters -->
+                                <input type="hidden" name="search" value="{{ request('search') }}">
+                                <input type="hidden" name="placement" value="{{ request('placement') }}">
+                                <input type="hidden" name="sort" value="{{ request('sort') }}">
+                                
                                 <label class="mb-1 fs-7" for="category">Kategória</label>
                                 <select id="category" name="category" class="form-select">
                                     <option value="" {{ request('category') == '' ? 'selected' : '' }}>Všetky</option>
@@ -70,14 +75,23 @@
                     </div>
                 </div>
 
-                <div>
-                    <select class="form-select" name="sort" onchange="window.location='{{ route('products.index') }}?sort='+this.value">
+                <form action="{{ route('products.index') }}" method="GET">
+                    <!-- Hidden inputs to retain the current search and sort parameters -->
+                    <input type="hidden" name="search" value="{{ request('search') }}">
+                    <input type="hidden" name="placement" value="{{ request('placement') }}">
+                    <input type="hidden" name="category" value="{{ request('category') }}">
+                    <input type="hidden" name="color" value="{{ request('color') }}">
+                    <input type="hidden" name="material" value="{{ request('material') }}">
+                    <input type="hidden" name="price_from" value="{{ request('price_from') }}">
+                    <input type="hidden" name="price_to" value="{{ request('price_to') }}">
+
+                    <select class="form-select" name="sort" onchange="this.form.submit()">
                         <option value="" {{ request('sort') == '' ? 'selected' : '' }}>Základné</option>
                         <option value="cheapest" {{ request('sort') == 'cheapest' ? 'selected' : '' }}>Najlacnejšie</option>
                         <option value="expensive" {{ request('sort') == 'expensive' ? 'selected' : '' }}>Najdrahšie</option>
                         <option value="alphabetical" {{ request('sort') == 'alphabetical' ? 'selected' : '' }}>Abecedne</option>
                     </select>
-                </div>
+                </form>
             </div>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
                 @forelse ($products as $product)
