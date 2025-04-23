@@ -209,6 +209,8 @@ class OrderController extends Controller
                     $order->products()->attach($product->id, [
                         'quantity' => $product->pivot->quantity
                     ]);
+
+                    $product->decrement('in_stock', $product->pivot->quantity);
                 }
             } else {
                 foreach ($cart as $productId => $item) {
@@ -216,6 +218,8 @@ class OrderController extends Controller
                     $order->products()->attach($productId, [
                         'quantity' => $item['quantity']
                     ]);
+
+                    $product->decrement('in_stock', $item['quantity']);
                 }
             }
 
