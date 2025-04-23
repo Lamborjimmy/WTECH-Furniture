@@ -44,6 +44,7 @@
                             @csrf
                             <button type="submit" class="nav-link">
                                 <i class="bi bi-door-closed-fill"></i> Odhlásiť sa
+                                <span class="text-success">({{ Auth::user()->name }})</span>
                             </button>
                         </form>
                     </li>

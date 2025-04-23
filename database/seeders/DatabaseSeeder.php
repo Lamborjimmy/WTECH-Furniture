@@ -611,5 +611,33 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }        
+        
+        DB::table('coupons')->insert([
+            [
+                'code' => Str::upper(Str::random(8)),
+                'discount' => 10,
+                'amount' => 10,
+            ],
+            [
+                'code' => Str::upper(Str::random(8)),
+                'discount' => 15,
+                'amount' => 10,
+            ],
+            [
+                'code' => Str::upper(Str::random(8)),
+                'discount' => 20,
+                'amount' => 10,
+            ],
+            [
+                'code' => Str::upper(Str::random(8)),
+                'discount' => 25,
+                'amount' => 10,
+            ],
+            [
+                'code' => Str::upper(Str::random(8)),
+                'discount' => 30,
+                'amount' => 10,
+            ],
+        ]);
     }
 }

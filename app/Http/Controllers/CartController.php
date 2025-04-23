@@ -198,4 +198,14 @@ class CartController extends Controller
 
         return redirect()->route('cart.index')->with('success', 'Zľavový kód použitý.');
     }
+
+    public function removeCoupon()
+    {
+        if (session('coupon_code')) {
+            session()->forget('coupon_code');
+            return redirect()->route('cart.index')->with('success', 'Zľavový kód odstránený.');
+        }
+        
+        return redirect()->route('cart.index')->with('error', 'Žiadny zľavový kód nebol zadaný.');
+    }
 }

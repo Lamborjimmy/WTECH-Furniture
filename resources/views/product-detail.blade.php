@@ -142,7 +142,7 @@
                                                         />
                                                     @else
                                                         <img
-                                                            src="{{ asset('assets/placeholder.png') }}"
+                                                            src="{{ asset('images/placeholder.png') }}"
                                                             class="img-fluid"
                                                             alt="No image"
                                                         />

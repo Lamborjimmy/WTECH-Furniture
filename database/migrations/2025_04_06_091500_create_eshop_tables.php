@@ -138,9 +138,5 @@ return new class extends Migration {
         Schema::dropIfExists('delivery_options');
         Schema::dropIfExists('payment_options');
         Schema::dropIfExists('delivery_details');
-        Schema::dropIfExists('roles');
-        Schema::table('users', function (Blueprint $table) {
-          $table->dropForeign(['role_id']);
-      });
     }
 };

@@ -4,20 +4,7 @@
     <main class="container py-4 flex-grow-1">
         <section>
             <!-- Cart Header -->
-            <div class="cart-header d-flex flex-column flex-md-row justify-content-evenly align-items-center mb-4">
-                <a href="{{ route('cart.index') }}" class="text-decoration-none text-secondary d-flex align-items-center">
-                    <i class="bi bi-1-circle-fill fs-4 me-2"></i>
-                    <span class="fw-bold fs-4">Košík</span>
-                </a>
-                <a href="{{ route('order.payment') }}" class="text-decoration-none text-dark d-flex align-items-center">
-                    <i class="bi bi-2-circle-fill fs-4 me-2"></i>
-                    <span class="fw-bold fs-4">Doprava a platba</span>
-                </a>
-                <a href="#" class="text-decoration-none text-secondary d-flex align-items-center">
-                    <i class="bi bi-3-circle-fill fs-4 me-2"></i>
-                    <span class="fw-bold fs-4">Dodacie údaje</span>
-                </a>
-            </div>
+            @include('components.cart-stepper', ['step' => 2])
 
             <!-- Success/Error Messages -->
             @if (session('success'))
@@ -141,10 +128,13 @@
                                     Celkom: 
                                     <span class="fw-bold">
                                         {{ number_format($total - $discount, 2) }}€
-                                        @if ($discount > 0)
-                                            (Zľava: {{ number_format($discount, 2) }}€)
-                                        @endif
                                     </span>
+                                    @if ($discount > 0)
+                                        <span class="text-danger ms-2">Zľava: </span>
+                                        <span class="text-danger fw-bold">
+                                            {{ number_format($discount, 2) }}€
+                                        </span>
+                                    @endif
                                 </h4>
                                 <button type="submit" form="payment-form" class="btn btn-success">
                                     Pokračovať <i class="bi bi-arrow-right ms-2"></i>

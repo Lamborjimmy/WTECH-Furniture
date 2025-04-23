@@ -4,20 +4,7 @@
     <main class="container py-4">
         <section>
             <!-- Cart Header -->
-            <div class="cart-header d-flex flex-column flex-md-row justify-content-evenly align-items-center mb-4">
-                <a href="{{ route('cart.index') }}" class="text-decoration-none text-dark d-flex align-items-center">
-                    <i class="bi bi-1-circle-fill fs-4 me-2"></i>
-                    <span class="fw-bold fs-4">Košík</span>
-                </a>
-                <a href="#" class="text-decoration-none text-secondary d-flex align-items-center">
-                    <i class="bi bi-2-circle-fill fs-4 me-2"></i>
-                    <span class="fw-bold fs-4">Doprava a platba</span>
-                </a>
-                <a href="#" class="text-decoration-none text-secondary d-flex align-items-center">
-                    <i class="bi bi-3-circle-fill fs-4 me-2"></i>
-                    <span class="fw-bold fs-4">Dodacie údaje</span>
-                </a>
-            </div>
+            @include('components.cart-stepper', ['step' => 1])
 
             <!-- Success/Error Messages -->
             @if (session('success'))
@@ -43,11 +30,11 @@
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="card-title fw-bold fs-4">
-                                                <a href="{{ route('products.show', $item['id']) }}" class="text-dark text-decoration-none">
+                                                <a href="{{ $item['id'] ? route('products.show', $item['id']) : '#' }}" class="text-dark text-decoration-none">
                                                     {{ $item['title'] }}
                                                 </a>
                                             </h5>
-                                            <form action="{{ route('cart.remove', $item['id']) }}" method="POST">
+                                            <form action="{{ $item['id'] ? route('cart.remove', $item['id']) : '#' }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-outline-danger btn-sm">
@@ -61,7 +48,7 @@
                                                 <i class="bi {{ $item['in_stock'] > 0 ? 'bi-check-circle text-success' : 'bi-x-circle text-danger' }} ms-1"></i>
                                             </span>
                                             <div class="d-flex flex-column align-items-end">
-                                                <form action="{{ route('cart.update', $item['id']) }}" method="POST" class="input-group w-auto mb-2">
+                                                <form action="{{ $item['id'] ? route('cart.update', $item['id']) : '#' }}" method="POST" class="input-group w-auto mb-2">
                                                     @csrf
                                                     @method('PUT')
                                                     <button class="btn btn-outline-secondary" type="submit" name="action" value="decrease">-</button>
@@ -95,6 +82,7 @@
                 <div class="cart-navigation mt-4">
                     <div class="d-flex justify-content-between align-items-center flex-column flex-md-row gap-3">
                         <div class="d-flex flex-column align-items-center align-items-md-start gap-3">
+                        <div class="d-flex align-items-center gap-2">
                             <form action="{{ route('cart.applyCoupon') }}" method="POST" class="d-flex w-100 w-md-auto">
                                 @csrf
                                 <input
@@ -107,6 +95,16 @@
                                 />
                                 <button class="btn btn-outline-primary" type="submit">Vložiť</button>
                             </form>
+                            @if (session('coupon_code'))
+                                <form action="{{ route('cart.removeCoupon') }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                             <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-2"></i> Späť k nákupu
                             </a>
@@ -116,10 +114,13 @@
                                 Celkom: 
                                 <span class="fw-bold">
                                     {{ number_format($total - $discount, 2) }}€
-                                    @if ($discount > 0)
-                                        (Zľava: {{ number_format($discount, 2) }}€)
-                                    @endif
                                 </span>
+                                @if ($discount > 0)
+                                    <span class="text-danger ms-2">Zľava: </span>
+                                    <span class="text-danger fw-bold">
+                                        {{ number_format($discount, 2) }}€
+                                    </span>
+                                @endif
                             </h4>
                             <a href="{{ route('order.payment') }}" class="btn btn-success">
                                 Pokračovať <i class="bi bi-arrow-right ms-2"></i>
