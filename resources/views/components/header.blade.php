@@ -44,7 +44,7 @@
                             @csrf
                             <button type="submit" class="nav-link">
                                 <i class="bi bi-door-closed-fill"></i> Odhlásiť sa
-                                <span class="text-success">({{ Auth::user()->name }})</span>
+                                <span class="d-none d-lg-inline text-success ">({{ Auth::user()->name }})</span>
                             </button>
                         </form>
                     </li>
@@ -64,7 +64,7 @@
                     <li class="nav-item">
                         <a class="d-flex align-items-center gap-1 nav-link" href="{{ route('products.index', ['placement' => $placement->id]) }}">
                             <i 
-                                class="bi bi-{{ $placement->name == 'Spálňa' ? 'lamp-fill' : ($placement->name == 'Kuchyňa' ? 'cup-hot-fill' : ($placement->name == 'Kúpeľňa' ? 'droplet-fill' : ($placement->name == 'Obývacia izba' ? 'tv-fill' : 'laptop-fill'))) }}"
+                                class="bi bi-{{ $placement->name == 'Spálňa' ? 'lamp-fill' : ($placement->name == 'Kuchyňa' ? 'cup-hot-fill' : ($placement->name == 'Kúpeľňa' ? 'droplet-fill' : ($placement->name == 'Obývačka' ? 'tv-fill' : ($placement->name == 'Kancelária' ? 'buildings-fill' : 'tree-fill' )))) }}"
                             >
                             </i>
                             {{ $placement->name }}
@@ -80,7 +80,7 @@
                 <li class="nav-item">
                     <a class="d-flex align-items-center gap-2 nav-link {{ $loop->first ? 'ps-0' : '' }}" href="{{ route('products.index', ['placement' => $placement->id]) }}">
                         <i 
-                            class="bi bi-{{ $placement->name == 'Spálňa' ? 'lamp-fill' : ($placement->name == 'Kuchyňa' ? 'cup-hot-fill' : ($placement->name == 'Kúpeľňa' ? 'droplet-fill' : ($placement->name == 'Obývacia izba' ? 'tv-fill' : 'laptop-fill'))) }}"
+                            class="bi bi-{{ $placement->name == 'Spálňa' ? 'lamp-fill' : ($placement->name == 'Kuchyňa' ? 'cup-hot-fill' : ($placement->name == 'Kúpeľňa' ? 'droplet-fill' : ($placement->name == 'Obývačka' ? 'tv-fill' : ($placement->name == 'Kancelária' ? 'buildings-fill' : 'tree-fill' )))) }}"
                         >
                         </i>
                         {{ $placement->name }}

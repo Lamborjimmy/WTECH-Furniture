@@ -1,6 +1,4 @@
 <x-app-layout>
-    <x-slot name="title">{{ $product->title }}</x-slot>
-
     <main class="container py-4">
         <div class="border border-secondary border-opacity-25 rounded-0 mw-100">
             <div class="row align-items-stretch p-4">
@@ -116,68 +114,119 @@
         </div>
 
         <!-- Description -->
-        <div class="border border-secondary border-opacity-25 rounded-0 mb-4 p-4">
+        <div class="border border-secondary border-opacity-25 rounded-0 my-4 p-4">
             <h2 class="mb-3">Popis</h2>
             <p class="mb-0">{{ $product->description }}</p>
         </div>
 
         <!-- Related Products -->
-        @if ($relatedProducts->isNotEmpty())
-            <section>
-                <h1>Súvisiace produkty</h1>
-                <div id="productsCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @foreach ($relatedProducts->chunk(4) as $index => $chunk)
-                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3 p-4 justify-content-center">
-                                    @foreach ($chunk as $relatedProduct)
-                                        <div class="col d-flex justify-content-center">
-                                            <div class="card p-3 px-5 px-sm-3 border border-secondary border-opacity-25 rounded-0">
-                                                <div class="bg-light rounded">
-                                                    @if ($relatedProduct->mainImage)
-                                                        <img
-                                                            src="{{ asset('storage/' . $relatedProduct->mainImage->path) }}"
-                                                            class="img-fluid"
-                                                            alt="{{ $relatedProduct->title }}"
-                                                        />
-                                                    @else
-                                                        <img
-                                                            src="{{ asset('images/placeholder.png') }}"
-                                                            class="img-fluid"
-                                                            alt="No image"
-                                                        />
-                                                    @endif
-                                                </div>
-                                                <div class="card-body px-0">
-                                                    <h5 class="card-title fw-bold fs-6 text-secondary mb-2">
-                                                        {{ $relatedProduct->title }}
-                                                    </h5>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="fs-5 fw-bold">{{ number_format($relatedProduct->price, 2) }}€</span>
-                                                        <a href="{{ route('products.show', $relatedProduct->id) }}"
-                                                           class="btn btn-outline-primary btn-sm d-flex align-items-center">
-                                                            <i class="bi bi-bag-fill me-2"></i> Kúpiť
-                                                        </a>
-                                                    </div>
+        <section>
+            <h1 class="m-0">Súvisiace produkty</h1>
+            <div id="relatedProductsCarouselLg" class="carousel slide d-none d-lg-block" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach($relatedProducts->chunk(4) as $chunkIndex => $chunk)
+                        <div class="carousel-item @if($chunkIndex === 0) active @endif">
+                            <div class="row row-cols-4 g-3 my-4 justify-content-center">
+                                @foreach($chunk as $product)
+                                    <div class="col d-flex justify-content-center m-0">
+                                        <div class="card p-3 px-5 px-sm-3 border border-secondary border-opacity-25 rounded-0">
+                                            <div class="bg-light rounded">
+                                                <img 
+                                                    src="{{ asset('storage/' . ($product->mainImage->path ?? 'images/placeholder.jpg')) }}"
+                                                    class="img-fluid"
+                                                    alt="{{ $product->title }}"
+                                                />
+                                            </div>
+                                            <div class="card-body px-0">
+                                                <h5 class="card-title fw-bold fs-6 text-secondary mb-2">
+                                                    {{ $product->title }}
+                                                </h5>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fs-5 fw-bold">{{ number_format($product->price, 2) }}€</span>
+                                                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-primary btn-sm d-flex align-items-center">
+                                                        <i class="bi bi-bag-fill me-2"></i> Kúpiť
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
-                                </div>
+                                    </div>
+                                @endforeach
                             </div>
-                        @endforeach
-                    </div>
-                    @if ($relatedProducts->count() > 4)
-                        <button class="carousel-control-prev" type="button" data-bs-target="#productsCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon bg-dark rounded"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#productsCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon bg-dark rounded"></span>
-                        </button>
-                    @endif
+                        </div>
+                    @endforeach
                 </div>
-            </section>
-        @endif
+            </div>
+        
+            <div id="relatedProductsCarouselMd" class="carousel slide d-none d-md-block d-lg-none" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach($relatedProducts->chunk(3) as $chunkIndex => $chunk)
+                        <div class="carousel-item @if($chunkIndex === 0) active @endif">
+                            <div class="row row-cols-3 g-3 my-4 justify-content-center m-0">
+                                @foreach($chunk as $product)
+                                    <div class="col d-flex justify-content-center">
+                                        <div class="card p-3 px-5 px-sm-3 border border-secondary border-opacity-25 rounded-0">
+                                            <div class="bg-light rounded">
+                                                <img 
+                                                    src="{{ asset('storage/' . ($product->mainImage->path ?? 'images/placeholder.jpg')) }}"
+                                                    class="img-fluid"
+                                                    alt="{{ $product->title }}"
+                                                />
+                                            </div>
+                                            <div class="card-body px-0">
+                                                <h5 class="card-title fw-bold fs-6 text-secondary mb-2">
+                                                    {{ $product->title }}
+                                                </h5>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fs-5 fw-bold">{{ number_format($product->price, 2) }}€</span>
+                                                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-primary btn-sm d-flex align-items-center">
+                                                        <i class="bi bi-bag-fill me-2"></i> Kúpiť
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div id="relatedProductsCarouselSm" class="carousel slide d-block d-md-none" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach($relatedProducts->chunk(1) as $chunkIndex => $chunk)
+                        <div class="carousel-item @if($chunkIndex === 0) active @endif">
+                            <div class="row row-cols-1 g-3 my-4 justify-content-center">
+                                @foreach($chunk as $product)
+                                    <div class="col d-flex justify-content-center m-0">
+                                        <div class="card p-3 px-5 px-sm-3 border border-secondary border-opacity-25 rounded-0">
+                                            <div class="bg-light rounded">
+                                                <img 
+                                                    src="{{ asset('storage/' . ($product->mainImage->path ?? 'images/placeholder.jpg')) }}"
+                                                    class="img-fluid"
+                                                    alt="{{ $product->title }}"
+                                                />
+                                            </div>
+                                            <div class="card-body px-0">
+                                                <h5 class="card-title fw-bold fs-6 text-secondary mb-2">
+                                                    {{ $product->title }}
+                                                </h5>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fs-5 fw-bold">{{ number_format($product->price, 2) }}€</span>
+                                                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-primary btn-sm d-flex align-items-center">
+                                                        <i class="bi bi-bag-fill me-2"></i> Kúpiť
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- JavaScript for Image Modal -->
