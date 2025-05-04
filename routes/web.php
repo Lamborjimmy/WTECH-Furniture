@@ -3,6 +3,7 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductController::class, 'home'])->name('home.index');
@@ -21,5 +22,12 @@ Route::post('/order/payment', [OrderController::class, 'storePayment'])->name('o
 Route::get('/order/delivery', [OrderController::class, 'delivery'])->name('order.delivery');
 Route::post('/order/delivery', [OrderController::class, 'storeDelivery'])->name('order.delivery.store');
 Route::get('/order-complete/{id}', [OrderController::class, 'orderComplete'])->name('order.complete');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+    Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
+    Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+});
 
 require __DIR__.'/auth.php';

@@ -18,12 +18,16 @@
     <body class="font-sans antialiased d-flex flex-column min-vh-100">
         @if(in_array(Route::currentRouteName(), ['login', 'register']))
             @include('components.header-minimal')
+        @elseif(Str::startsWith(Route::currentRouteName(), 'admin.'))
+            @include('components.admin-header')
         @else
             @include('components.header')
         @endif
         <main class="d-flex flex-column flex-grow-1">
             {{ $slot }}
         </main>
-        @include('components.footer')
+        @if(in_array(Route::currentRouteName(), ['login', 'register']))
+            @include('components.footer')
+        @endif
     </body>
 </html>
