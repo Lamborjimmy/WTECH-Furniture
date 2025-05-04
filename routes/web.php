@@ -26,6 +26,7 @@ Route::get('/order-complete/{id}', [OrderController::class, 'orderComplete'])->n
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
     Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
     Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
 });

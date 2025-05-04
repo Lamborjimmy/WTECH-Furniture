@@ -9,6 +9,8 @@ class ImageReference extends Model
 {
     use HasFactory;
     
+    public $timestamps = false;
+
     protected $fillable = ['product_id', 'title', 'path', 'is_main'];
 
     public function product()

@@ -29,6 +29,7 @@
                             src="{{ $product->mainImage ? asset('storage/' . $product->mainImage->path) : asset('assets/placeholder.png') }}"
                             class="img-fluid col-4 col-sm-3 col-lg-2 col-xl-1"
                             alt="{{ $product->title }}"
+                            data-path="{{ $product->mainImage ? $product->mainImage->path : 'placeholder' }}"
                         />
                         <div>
                             <h4 class="fs-5 text-secondary m-0">{{ $product->title }}</h4>
