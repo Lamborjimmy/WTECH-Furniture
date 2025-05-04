@@ -154,11 +154,30 @@ class AdminProductController extends Controller
         return view('admin-products-edit', compact('product'));
     }
 
-    public function destroy($id)
+     public function destroy($id)
     {
         $product = Product::where('valid', true)->findOrFail($id);
-        $product->update(['valid' => false]);
 
-        return redirect()->route('admin.products.index')->with('success', 'Produkt „' . $product->title . '“ bol odstránený.');
+        try {
+            // Delete associated image files and database records
+            $images = ImageReference::where('product_id', $product->id)->get();
+            foreach ($images as $image) {
+                if (Storage::disk('public')->exists($image->path)) {
+                    Storage::disk('public')->delete($image->path);
+                    Log::info('Image file deleted', ['product_id' => $product->id, 'path' => $image->path]);
+                }
+                $image->delete();
+                Log::info('Image reference deleted', ['image_id' => $image->id, 'product_id' => $product->id]);
+            }
+
+            // Delete the product
+            $product->delete();
+            Log::info('Product deleted', ['product_id' => $product->id, 'title' => $product->title]);
+
+            return redirect()->route('admin.products.index')->with('success', 'Produkt „' . $product->title . '“ bol odstránený.');
+        } catch (\Exception $e) {
+            Log::error('Error deleting product', ['product_id' => $id, 'error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return redirect()->route('admin.products.index')->with('error', 'Chyba pri odstraňovaní produktu: ' . $e->getMessage());
+        }
     }
 }
