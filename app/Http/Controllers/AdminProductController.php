@@ -8,6 +8,7 @@ use App\Models\Color;
 use App\Models\Material;
 use App\Models\Placement;
 use App\Models\ImageReference;
+use App\Models\CartsProducts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -159,24 +160,33 @@ class AdminProductController extends Controller
         $product = Product::where('valid', true)->findOrFail($id);
 
         try {
+            // Log start of deletion
+            
+
+            // Delete associated cart entries
+            $cartEntries = CartsProducts::where('product_id', $product->id)->get();
+            foreach ($cartEntries as $cartEntry) {
+                $cartEntry->delete();
+            
+            }
+
             // Delete associated image files and database records
             $images = ImageReference::where('product_id', $product->id)->get();
             foreach ($images as $image) {
                 if (Storage::disk('public')->exists($image->path)) {
-                    Storage::disk('public')->delete($image->path);
-                    Log::info('Image file deleted', ['product_id' => $product->id, 'path' => $image->path]);
+                    Storage::disk('public')->delete($image->path);            
                 }
                 $image->delete();
-                Log::info('Image reference deleted', ['image_id' => $image->id, 'product_id' => $product->id]);
+
             }
 
-            // Delete the product
-            $product->delete();
-            Log::info('Product deleted', ['product_id' => $product->id, 'title' => $product->title]);
+            // Permanently delete the product
+            $product->forceDelete();
+            
 
             return redirect()->route('admin.products.index')->with('success', 'Produkt „' . $product->title . '“ bol odstránený.');
         } catch (\Exception $e) {
-            Log::error('Error deleting product', ['product_id' => $id, 'error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            
             return redirect()->route('admin.products.index')->with('error', 'Chyba pri odstraňovaní produktu: ' . $e->getMessage());
         }
     }
