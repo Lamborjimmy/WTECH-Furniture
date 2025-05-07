@@ -133,6 +133,7 @@ class ProductController extends Controller
         }
 
         $newestProducts = Product::with(['mainImage'])
+            ->where('valid', true)
             ->orderByDesc('added_date')
             ->limit(8)
             ->get();

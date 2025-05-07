@@ -181,7 +181,7 @@ class AdminProductController extends Controller
             }
 
             // Permanently delete the product
-            $product->forceDelete();
+            $product->update(['valid' => false]);
             
 
             return redirect()->route('admin.products.index')->with('success', 'Produkt „' . $product->title . '“ bol odstránený.');
