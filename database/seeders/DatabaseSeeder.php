@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,7 +16,14 @@ class DatabaseSeeder extends Seeder
     {
         // roles
         DB::table('roles')->insert(['name' => 'customer']);
-        DB::table('roles')->insert(['name' => 'administrator']);
+        $adminRoleId = DB::table('roles')->insertGetId(['name' => 'administrator']);
+
+        DB::table('users')->insert([
+            'name' => 'admin',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('admin123'),
+            'role_id' => $adminRoleId,
+        ]);
 
         // payment options
         DB::table('payment_options')->insert(['name' => 'Platba kartou']);

@@ -16,9 +16,9 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased d-flex flex-column min-vh-100">
-        @if(in_array(Route::currentRouteName(), ['login', 'register']))
+        @if(in_array(Route::currentRouteName(), ['login', 'register', 'admin.login']))
             @include('components.header-minimal')
-        @elseif(Str::startsWith(Route::currentRouteName(), 'admin.'))
+        @elseif(Str::startsWith(Route::currentRouteName(), 'admin'))
             @include('components.admin-header')
         @else
             @include('components.header')
@@ -26,7 +26,10 @@
         <main class="d-flex flex-column flex-grow-1">
             {{ $slot }}
         </main>
-        @if(in_array(Route::currentRouteName(), ['login', 'register']))
+        @if(
+            !in_array(Route::currentRouteName(), ['login', 'register', 'admin.login']) &&
+            !Str::startsWith(Route::currentRouteName(), 'admin')
+        )
             @include('components.footer')
         @endif
     </body>

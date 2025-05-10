@@ -1,11 +1,3 @@
-<style>
-        nav.bg-white.border-b.border-gray-100 {
-                display: none;
-            }
-        .navbar-collapse, .navbar-nav, .nav-link, .d-flex[role="search"] {
-            visibility: visible !important;
-        }
-    </style>
 <nav class="navbar navbar-expand-lg bg-light py-2 d-flex flex-column">
     <div class="container d-flex justify-content-between">
         <a href="{{ route('home.index') }}">
