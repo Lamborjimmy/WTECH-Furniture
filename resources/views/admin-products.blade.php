@@ -1,10 +1,8 @@
 <x-app-layout>
-    <x-slot name="title">Administrácia - Produkty</x-slot>
-
     <main class="container py-4">
         <h3 class="fs-4 mb-3">Zoznam produktov</h3>
         <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-5">
-            <form class="col-12 col-md-6 col-lg-4 d-flex" role="search" action="{{ route('admin.products.index') }}" method="GET">
+            <form class="col-12 col-md-6 col-lg-4 d-flex" role="search" action="{{ route('admin.index') }}" method="GET">
                 <input
                     class="form-control me-2"
                     type="search"
@@ -15,7 +13,7 @@
                 />
                 <button class="btn btn-outline-success" type="submit">Hľadať</button>
             </form>
-            <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
+            <a href="{{ route('admin.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus"></i>
                 Pridať produkt
             </a>
@@ -37,11 +35,11 @@
                         </div>
                     </div>
                     <div class="col-md-6 d-flex gap-3 justify-content-end mt-3 mt-md-0">
-                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-outline-success">
+                        <a href="{{ route('admin.createEdit', $product->id) }}" class="btn btn-outline-success">
                             <i class="bi bi-pen-fill"></i>
                             Upraviť
                         </a>
-                        <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Naozaj chcete odstrániť produkt „{{ $product->title }}“?');">
+                        <form action="{{ route('admin.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Naozaj chcete odstrániť produkt „{{ $product->title }}“?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger">

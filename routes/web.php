@@ -31,13 +31,13 @@ Route::middleware([CustomerMiddleware::class])->group(function () {
     Route::get('/order-complete/{id}', [OrderController::class, 'orderComplete'])->name('order.complete');
 });
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
-    Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
-    Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
-    Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
-    Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
-    Route::post('/products/delete-image', [AdminProductController::class, 'deleteImage'])->name('admin.products.delete-image');
+Route::middleware([AdminMiddleware::class])->group(function () {
+    Route::get('/admin', [AdminProductController::class, 'index'])->name('admin.index');
+    Route::get('/admin/add', [AdminProductController::class, 'create'])->name('admin.create');
+    Route::post('/admin/add', [AdminProductController::class, 'store'])->name('admin.store');
+    Route::get('/admin/edit/{id}', [AdminProductController::class, 'createEdit'])->name('admin.createEdit');
+    Route::put('/admin/edit/{id}', [AdminProductController::class, 'storeEdit'])->name('admin.storeEdit');
+    Route::delete('/admin/delete/{id}', [AdminProductController::class, 'destroy'])->name('admin.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -14,6 +14,6 @@ class CustomerMiddleware
             return $next($request);
         }
 
-        return redirect()->intended(route('admin.products.index', absolute: false));
+        return redirect()->intended(route('admin.index', absolute: false));
     }
 }

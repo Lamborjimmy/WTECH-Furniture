@@ -1,6 +1,4 @@
 <x-app-layout>
-    <x-slot name="title">Administrácia - Nový produkt</x-slot>
-
     <style>
         .admin-image-container {
             position: relative;
@@ -13,17 +11,18 @@
             z-index: 10;
         }
     </style>
-
     <main class="container py-5 my-5">
         <div class="row justify-content-center col-lg-8 mx-auto p-4 bg-light">
-            <h2 class="fs-3 text-secondary text-center mb-3">Nový produkt</h2>
+            <h2 class="fs-3 text-secondary text-center mb-3">
+                {{ isset($product) ? 'Upraviť produkt' : 'Nový produkt' }}
+            </h2>
 
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    <ul>
+                    <ul class="m-0">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -31,8 +30,15 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+            <form 
+                action="{{ isset($product) ? route('admin.storeEdit', ['id' => $product->id]) : route('admin.store') }}" 
+                method="POST" 
+                enctype="multipart/form-data"
+            >
                 @csrf
+                @if (isset($product))
+                    @method('PUT')
+                @endif
                 <div class="row">
                     <div class="col-md-8 mb-3">
                         <label for="title" class="form-label">Názov</label>
@@ -41,7 +47,7 @@
                             type="text"
                             class="form-control @error('title') is-invalid @enderror"
                             name="title"
-                            value="{{ old('title') }}"
+                            value="{{ old('title', $product->title ?? '') }}"
                             required
                         />
                         @error('title')
@@ -55,7 +61,7 @@
                             type="text"
                             class="form-control @error('code') is-invalid @enderror"
                             name="code"
-                            value="{{ old('code') }}"
+                            value="{{ old('code', $product->code ?? '') }}"
                             required
                         />
                         @error('code')
@@ -71,7 +77,7 @@
                         name="description"
                         rows="5"
                         required
-                    >{{ old('description') }}</textarea>
+                    >{{ old('description', $product->description ?? '') }}</textarea>
                     @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -88,71 +94,55 @@
                             id="main_image"
                             name="main_image"
                             accept="image/*"
-                            required
+                            {{ isset($product) ? '' : 'required' }}
                         />
                         @error('main_image')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div id="main_image_preview" class="col-4 col-sm-3 col-md-2 mt-2"></div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Detail produktu (1)</label>
-                    <div class="input-group">
-                        <label class="input-group-text" for="detail_image_1">
-                            <i class="bi bi-image"></i>
-                        </label>
-                        <input
-                            class="form-control @error('detail_image_1') is-invalid @enderror"
-                            type="file"
-                            id="detail_image_1"
-                            name="detail_image_1"
-                            accept="image/*"
-                        />
-                        @error('detail_image_1')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div id="main_image_preview" class="col-4 col-sm-3 col-md-2 mt-2">
+                        @if(isset($mainImage))
+                            <div class="admin-image-container border border-secondary mt-3">
+                                <img src="{{ asset('storage/' . $mainImage->path) }}" class="img-fluid" alt="Main Image">
+                                <div class="admin-delete-button d-none gap-1 badge text-bg-dark">
+                                    <input type="checkbox" value="{{ $mainImage->id }}">
+                                    <label>Odstrániť</label>
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                    <div id="detail_image_preview_1" class="col-4 col-sm-3 col-md-2 mt-2"></div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Detail produktu (2)</label>
-                    <div class="input-group">
-                        <label class="input-group-text" for="detail_image_2">
-                            <i class="bi bi-image"></i>
-                        </label>
-                        <input
-                            class="form-control @error('detail_image_2') is-invalid @enderror"
-                            type="file"
-                            id="detail_image_2"
-                            name="detail_image_2"
-                            accept="image/*"
-                        />
-                        @error('detail_image_2')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                @for($i = 0; $i < 3; $i++)
+                    <div class="mb-3">
+                        <label class="form-label">Detail produktu ({{ $i + 1 }})</label>
+                        <div class="input-group">
+                            <label class="input-group-text" for="detail_image_{{ $i + 1 }}">
+                                <i class="bi bi-image"></i>
+                            </label>
+                            <input
+                                class="form-control @error('detail_image_' . ($i + 1)) is-invalid @enderror"
+                                type="file"
+                                id="detail_image_{{ $i + 1 }}"
+                                name="detail_image_{{ $i + 1 }}"
+                                accept="image/*"
+                            />
+                            @error('detail_image_' . ($i + 1))
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div id="detail_image_preview_{{ $i + 1 }}" class="col-4 col-sm-3 col-md-2 mt-2">
+                            @if(isset($detailImages[$i]))
+                                <div class="admin-image-container border border-secondary mt-3">
+                                    <img src="{{ asset('storage/' . $detailImages[$i]->path) }}" class="img-fluid" alt="Detail Image {{ $i + 1 }}">
+                                    <div class="admin-delete-button d-flex gap-1 badge text-bg-dark">
+                                        <input type="checkbox" name="delete_images[]" value="{{ $detailImages[$i]->id }}">
+                                        <label>Odstrániť</label>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    <div id="detail_image_preview_2" class="col-4 col-sm-3 col-md-2 mt-2"></div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Detail produktu (3)</label>
-                    <div class="input-group">
-                        <label class="input-group-text" for="detail_image_3">
-                            <i class="bi bi-image"></i>
-                        </label>
-                        <input
-                            class="form-control @error('detail_image_3') is-invalid @enderror"
-                            type="file"
-                            id="detail_image_3"
-                            name="detail_image_3"
-                            accept="image/*"
-                        />
-                        @error('detail_image_3')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div id="detail_image_preview_3" class="col-4 col-sm-3 col-md-2 mt-2"></div>
-                </div>
+                @endfor
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="category_id" class="form-label">Kategória</label>
@@ -164,7 +154,10 @@
                         >
                             <option value="" selected hidden>Vybrať kategóriu</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                            <option 
+                                value="{{ $category->id }}" 
+                                {{ old('category_id', $product->category_id ?? '') == $category->id ? 'selected' : '' }}
+                            >
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -183,7 +176,10 @@
                         >
                             <option value="" selected hidden>Vybrať farbu</option>
                             @foreach ($colors as $color)
-                                <option value="{{ $color->id }}" {{ old('color_id') == $color->id ? 'selected' : '' }}>
+                                <option 
+                                    value="{{ $color->id }}" 
+                                    {{ old('color_id', $product->color_id ?? '') == $color->id ? 'selected' : '' }}
+                                >
                                     {{ $color->name }}
                                 </option>
                             @endforeach
@@ -204,7 +200,10 @@
                         >
                             <option value="" selected hidden>Vybrať materiál</option>
                             @foreach ($materials as $material)
-                                <option value="{{ $material->id }}" {{ old('material_id') == $material->id ? 'selected' : '' }}>
+                            <option 
+                                value="{{ $material->id }}" 
+                                {{ old('material_id', $product->material_id ?? '') == $material->id ? 'selected' : '' }}
+                            >
                                     {{ $material->name }}
                                 </option>
                             @endforeach
@@ -223,7 +222,10 @@
                         >
                             <option value="" selected hidden>Vybrať umiestnenie</option>
                             @foreach ($placements as $placement)
-                                <option value="{{ $placement->id }}" {{ old('placement_id') == $placement->id ? 'selected' : '' }}>
+                            <option 
+                            value="{{ $placement->id }}" 
+                                {{ old('placement_id', $product->placement_id ?? '') == $placement->id ? 'selected' : '' }}
+                            >
                                     {{ $placement->name }}
                                 </option>
                             @endforeach
@@ -245,7 +247,7 @@
                                 min="0.01"
                                 class="form-control @error('price') is-invalid @enderror"
                                 name="price"
-                                value="{{ old('price') }}"
+                                value="{{ old('price', $product->price ?? '') }}"
                                 aria-describedby="priceEuro"
                                 required
                             />
@@ -262,7 +264,7 @@
                                 min="1"
                                 class="form-control @error('width') is-invalid @enderror"
                                 name="width"
-                                value="{{ old('width') }}"
+                                value="{{ old('width', $product->width ?? '') }}"
                                 placeholder="Š"
                                 required
                             />
@@ -272,7 +274,7 @@
                                 min="1"
                                 class="form-control @error('length') is-invalid @enderror"
                                 name="length"
-                                value="{{ old('length') }}"
+                                value="{{ old('length', $product->length ?? '') }}"
                                 placeholder="D"
                                 required
                             />
@@ -282,7 +284,7 @@
                                 min="1"
                                 class="form-control @error('depth') is-invalid @enderror"
                                 name="depth"
-                                value="{{ old('depth') }}"
+                                value="{{ old('depth', $product->depth ?? '') }}"
                                 placeholder="H"
                                 required
                             />
@@ -305,7 +307,7 @@
                         type="number"
                         class="form-control @error('in_stock') is-invalid @enderror"
                         name="in_stock"
-                        value="{{ old('in_stock') }}"
+                        value="{{ old('in_stock', $product->in_stock ?? '') }}"
                         min="0"
                     />
                     @error('in_stock')
@@ -313,19 +315,18 @@
                     @enderror
                 </div>
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i>
                         Späť
                     </a>
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-check"></i>
-                        Pridať
+                        {{ isset($product) ? 'Upraviť' : 'Pridať' }}
                     </button>
                 </div>
             </form>
         </div>
     </main>
-
     <script>
         const imageIds = [
             { input: "main_image", preview: "main_image_preview" },
@@ -338,9 +339,21 @@
             document.getElementById(imageId.input).addEventListener("change", (event) => {
                 const files = event.target.files;
                 const previewContainer = document.getElementById(imageId.preview);
-                previewContainer.innerHTML = "";
 
                 if (files.length === 0) return;
+
+                const existingCheckbox = previewContainer.querySelector('input[type="checkbox"]');
+                
+                if (existingCheckbox) {
+                    existingCheckbox.checked = true;
+                    existingCheckbox.disabled = true;
+                    
+                    const existingImage = previewContainer.querySelector('.admin-image-container');
+                    
+                    if (existingImage) {
+                        existingImage.style.opacity = '0.5';
+                    }
+                }
 
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -364,6 +377,17 @@
                     deleteButton.onclick = () => {
                         container.remove();
                         event.target.value = "";
+
+                        if (existingCheckbox) {
+                            existingCheckbox.checked = false;
+                            existingCheckbox.disabled = false;
+                            
+                            const existingImage = previewContainer.querySelector('.admin-image-container');
+
+                            if (existingImage) {
+                                existingImage.style.opacity = '1';
+                            }
+                        }
                     };
 
                     const img = document.createElement("img");

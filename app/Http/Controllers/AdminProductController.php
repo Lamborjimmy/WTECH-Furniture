@@ -2,44 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Material;
 use App\Models\Placement;
-use App\Models\ImageReference;
-use App\Models\CartsProducts;
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class AdminProductController extends Controller
 {
-    public function __construct()
-    {
-        /*$this->middleware(function ($request, $next) {
-            if (!Auth::user() || Auth::user()->role->name !== 'admin') {
-                abort(403, 'Neoprávnený prístup.');
-            }
-            return $next($request);
-        });*/
-    }
-
     public function index(Request $request)
     {
-        $search = $request->query('search');
+        $search = $request->input('search');
         $products = Product::with('mainImage')
-            ->where('valid', true)
             ->when($search, function ($query, $search) {
-                return $query->where(function ($q) use ($search) {
-                    $q->where('title', 'like', '%' . $search . '%')
-                      ->orWhere('code', 'like', '%' . $search . '%');
-                });
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
             })
-            ->orderBy('added_date', 'desc')
-            ->paginate(8);
+            ->paginate(10);
 
         return view('admin-products', compact('products'));
     }
@@ -51,13 +32,11 @@ class AdminProductController extends Controller
         $materials = Material::all();
         $placements = Placement::all();
 
-        return view('admin-products-create', compact('categories', 'colors', 'materials', 'placements'));
+        return view('product-form', compact('categories', 'colors', 'materials', 'placements'));
     }
 
     public function store(Request $request)
     {
-
-
         $validated = $request->validate([
             'title' => 'required|string|max:255|unique:products,title',
             'code' => 'required|string|max:50|unique:products,code|regex:/^[A-Za-z0-9]+$/',
@@ -92,7 +71,6 @@ class AdminProductController extends Controller
         ]);
 
         try {
-
             // Create product
             $product = Product::create([
                 'title' => $validated['title'],
@@ -109,7 +87,7 @@ class AdminProductController extends Controller
                 'in_stock' => $validated['in_stock'] ?? 0,
                 'valid' => true,
                 'added_date' => now(),
-                'modified_date' => now(),
+                'modified_date' => NULL,
             ]);
 
             // Store main image
@@ -143,51 +121,184 @@ class AdminProductController extends Controller
                     ]);
                 }
             }
-            return redirect()->route('admin.products.index')->with('success', 'Produkt „' . $product->title . '“ bol úspešne pridaný.');
+            return redirect()->route('admin.index')->with('success', 'Produkt „' . $product->title . '“ bol úspešne pridaný.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Chyba pri pridávaní produktu: ' . $e->getMessage())->withInput();
         }
     }
 
-    public function edit($id)
+    public function createEdit($id)
     {
-        $product = Product::where('valid', true)->findOrFail($id);
-        return view('admin-products-edit', compact('product'));
+        $product = Product::findOrFail($id);
+        $categories = Category::all();
+        $colors = Color::all();
+        $materials = Material::all();
+        $placements = Placement::all();
+
+        $mainImage = $product->images()->where('is_main', true)->first();
+        $detailImages = $product->images()->where('is_main', false)->get();
+    
+        return view('product-form', compact('product', 'categories', 'colors', 
+            'materials', 'placements', 'mainImage', 'detailImages'));
     }
 
-     public function destroy($id)
+    public function storeEdit(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'code' => 'required|string|max:50',
+                'description' => 'required|string|max:1000',
+                'category_id' => 'required|exists:categories,id',
+                'color_id' => 'required|exists:colors,id',
+                'material_id' => 'required|exists:materials,id',
+                'placement_id' => 'required|exists:placements,id',
+                'price' => 'required|numeric|gt:0',
+                'in_stock' => 'required|integer|min:0',
+                'width' => 'required|numeric|gt:0',
+                'length' => 'required|numeric|gt:0',
+                'depth' => 'required|numeric|gt:0',
+                'main_image' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+                'detail_image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+                'detail_image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+                'detail_image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+                'delete_images' => 'nullable|array',
+                'delete_images.*' => 'exists:image_references,id',
+            ], [
+                'title.unique' => 'Produkt s týmto názvom už existuje.',
+                'code.unique' => 'Produkt s týmto kódom už existuje.',
+                'code.regex' => 'Kód môže obsahovať iba písmená a čísla.',
+                'main_image.image' => 'Hlavný obrázok musí byť platný obrázok (jpeg, png, jpg).',
+                'main_image.max' => 'Hlavný obrázok nesmie byť väčší ako 5MB.',
+                'detail_image_*.image' => 'Detailný obrázok musí byť platný obrázok (jpeg, png, jpg).',
+                'detail_image_*.max' => 'Detailný obrázok nesmie byť väčší ako 5MB.',
+                'price.gt' => 'Cena musí byť väčšia ako 0.',
+                'width.gt' => 'Šírka musí byť väčšia ako 0.',
+                'length.gt' => 'Dĺžka musí byť väčšia ako 0.',
+                'depth.gt' => 'Hĺbka musí byť väčšia ako 0.',
+                'in_stock.gt' => 'Množstvo musí byť aspoň 1.',
+            ]);
+    
+            if ($request->hasFile('main_image')) {
+                $oldMainImage = $product->images()->where('is_main', true)->first();
+                if ($oldMainImage) {
+                    Storage::delete('public/' . $oldMainImage->path);
+                    $oldMainImage->delete();
+                }
+    
+                $file = $request->file('main_image');
+                $extension = $file->getClientOriginalExtension();
+                $uniqueName = $product->code . '-main-' . time() . '.' . $extension;
+                $path = $file->storeAs('products', $uniqueName, 'public');
+
+                $product->images()->create([
+                    'product_id' => $product->id,
+                    'title' => $product->title . ' - Hlavný obrázok',
+                    'path' => $path,
+                    'is_main' => true,
+                ]);
+            }
+    
+            $detailImages = $product->images()
+                ->where('is_main', false)
+                ->orderBy('id')
+                ->get();
+
+            foreach ($detailImages as $index => $image) {
+                $position = $index + 1;
+                
+                if ($request->has('delete_images') && in_array($image->id, $request->delete_images)) {
+                    Storage::delete('public/' . $image->path);
+                    $image->delete();
+                    
+                    if ($request->hasFile("detail_image_{$position}")) {
+                        $file = $request->file("detail_image_{$position}");
+                        $extension = $file->getClientOriginalExtension();
+                        $uniqueName = $product->code . '-detail-' . $position . '-' . time() . '.' . $extension;
+                        $path = $file->storeAs('products', $uniqueName, 'public');
+
+                        $product->images()->create([
+                            'product_id' => $product->id,
+                            'title' => $product->title . ' - Detail ' . $position,
+                            'path' => $path,
+                            'is_main' => false,
+                        ]);
+                    }
+                }
+            }
+    
+            for ($i = count($detailImages) + 1; $i <= 3; $i++) {
+                if ($request->hasFile("detail_image_{$i}")) {
+                    $file = $request->file("detail_image_{$i}");
+                    $extension = $file->getClientOriginalExtension();
+                    $uniqueName = $product->code . '-detail-' . $i . '-' . time() . '.' . $extension;
+                    $path = $file->storeAs('products', $uniqueName, 'public');
+
+                    $product->images()->create([
+                        'product_id' => $product->id,
+                        'title' => $product->title . ' - Detail ' . $i,
+                        'path' => $path,
+                        'is_main' => false,
+                    ]);
+                }
+            }
+    
+            $updatedProduct = [
+                'title' => $validated['title'],
+                'code' => $validated['code'],
+                'description' => $validated['description'],
+                'category_id' => $validated['category_id'],
+                'color_id' => $validated['color_id'],
+                'material_id' => $validated['material_id'],
+                'placement_id' => $validated['placement_id'],
+                'price' => $validated['price'],
+                'in_stock' => $validated['in_stock'],
+                'width' => $validated['width'],
+                'length' => $validated['length'],
+                'depth' => $validated['depth'],
+                'modified_date' => now()
+            ];
+    
+            $product->update($updatedProduct);
+    
+            return redirect()->route('admin.index')->with('success', 'Produkt „' . $product->title . '“ bol úspešne upravený.');
+        }
+        catch (\Exception $e) {
+            dd($e);
+            return redirect()->back()->with('error', 'Chyba pri úprave produktu: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    public function destroy($id)
     {
         $product = Product::where('valid', true)->findOrFail($id);
 
         try {
-            // Log start of deletion
-            
-
             // Delete associated cart entries
             $cartEntries = CartsProducts::where('product_id', $product->id)->get();
+            
             foreach ($cartEntries as $cartEntry) {
                 $cartEntry->delete();
-            
             }
 
             // Delete associated image files and database records
             $images = ImageReference::where('product_id', $product->id)->get();
+            
             foreach ($images as $image) {
                 if (Storage::disk('public')->exists($image->path)) {
                     Storage::disk('public')->delete($image->path);            
                 }
                 $image->delete();
-
             }
 
-            // Permanently delete the product
-            $product->update(['valid' => false]);
-            
+            // Soft delete the product
+            $product->update(['valid' => false]); 
 
-            return redirect()->route('admin.products.index')->with('success', 'Produkt „' . $product->title . '“ bol odstránený.');
+            return redirect()->route('admin.index')->with('success', 'Produkt „' . $product->title . '“ bol odstránený.');
         } catch (\Exception $e) {
-            
-            return redirect()->route('admin.products.index')->with('error', 'Chyba pri odstraňovaní produktu: ' . $e->getMessage());
+            return redirect()->route('admin.index')->with('error', 'Chyba pri odstraňovaní produktu: ' . $e->getMessage());
         }
     }
 }
