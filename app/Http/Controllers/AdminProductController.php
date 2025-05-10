@@ -266,7 +266,6 @@ class AdminProductController extends Controller
             return redirect()->route('admin.index')->with('success', 'Produkt „' . $product->title . '“ bol úspešne upravený.');
         }
         catch (\Exception $e) {
-            dd($e);
             return redirect()->back()->with('error', 'Chyba pri úprave produktu: ' . $e->getMessage())->withInput();
         }
     }
@@ -281,6 +280,19 @@ class AdminProductController extends Controller
             
             foreach ($cartEntries as $cartEntry) {
                 $cartEntry->delete();
+            }
+
+            // Remove product from all sessions
+            $sessions = Session::all();
+
+            foreach ($sessions as $session) {
+                if (isset($session['cart'])) {
+                    $cart = $session['cart'];
+                    if (isset($cart[$product->id])) {
+                        unset($cart[$product->id]);
+                        $session['cart'] = $cart;
+                    }
+                }
             }
 
             // Delete associated image files and database records
