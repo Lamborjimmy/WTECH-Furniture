@@ -7,8 +7,11 @@ use App\Models\Color;
 use App\Models\Material;
 use App\Models\Placement;
 use App\Models\Product;
+use App\Models\ImageReference;
+use App\Models\CartsProducts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class AdminProductController extends Controller
 {
@@ -20,6 +23,7 @@ class AdminProductController extends Controller
                 $query->where('title', 'like', "%{$search}%")
                     ->orWhere('code', 'like', "%{$search}%");
             })
+            ->where('valid', true)
             ->paginate(10);
 
         return view('admin-products', compact('products'));
@@ -283,14 +287,19 @@ class AdminProductController extends Controller
             }
 
             // Remove product from all sessions
-            $sessions = Session::all();
+            $sessions = DB::table('sessions')->get();
 
             foreach ($sessions as $session) {
-                if (isset($session['cart'])) {
-                    $cart = $session['cart'];
-                    if (isset($cart[$product->id])) {
-                        unset($cart[$product->id]);
-                        $session['cart'] = $cart;
+                if ($session->payload) {
+                    $data = unserialize(base64_decode($session->payload));
+
+                    if (isset($data['cart']) && isset($data['cart'][$product->id])) {
+                        unset($data['cart'][$product->id]);
+                        $session->payload = base64_encode(serialize($data));
+
+                        DB::table('sessions')
+                            ->where('id', $session->id)
+                            ->update(['payload' => $session->payload]);
                     }
                 }
             }
